@@ -2,7 +2,7 @@
  ============================================================================
  Name        : Reolink2Exacq.c
  Author      : Mark Meadows
- Version     : 0.0.1a
+ Version     : 0.1.0b
  Copyright   : copyright 2024
  Description : Reolink2Exacq in C, Ansi-style
  Allows Reolink Camera to be used with Exacq Vision NVR
@@ -65,14 +65,14 @@ int main(int argc, char *argv[]) {
 	cout << PID << endl;
     PID_string = to_string(PID);
 
-	WriteToLog(PID_string + Instance_Name + " Reolink2Exacq has started..." );
+	WriteToLog(PID_string + " " + Instance_Name + " Reolink2Exacq has started..." );
 
 	if(argc < 6){
 		cout<< " " << endl;
 		cout<<"Please check command line arguments" << endl;
 	    cout<<"Example: ./Reolink2Exacq 10.10.10.32 admin pAsswOrd 10.10.10.19 1235"<< endl;
 	    cout<< " " << endl;
-	    WriteToLog(PID_string + Instance_Name + " Reolink2Eacq Stoped with Incomplete arguments error...");
+	    WriteToLog(PID_string + " " + Instance_Name + " Reolink2Eacq Stoped with Incomplete arguments error...");
 		return(2);
 	}
 
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
        }
 
 
-    WriteToLog(PID_string + Instance_Name + "Reolink2Exacq has Stoped ...");
+    WriteToLog(PID_string + " " + Instance_Name + "Reolink2Exacq has Stoped ...");
 	return EXIT_SUCCESS;
 }
 
@@ -139,7 +139,7 @@ int  CheckCameraMotionStatus(string CameraIP, string CameraUserName, string Came
 
 				   if(res == '7')
 				   {
-					WriteToLog (PID_string + "Unable to Connect to Camera ...");
+					WriteToLog (PID_string + " " + Instance_Name + "Unable to Connect to Camera ...");
 					fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
 			        curl_easy_cleanup(curl);
 			        curl_global_cleanup();
@@ -150,7 +150,7 @@ int  CheckCameraMotionStatus(string CameraIP, string CameraUserName, string Came
 
 				  if (readBuffer.length() < 10)
 				   {
-					WriteToLog(PID_string + " Camera Reply Error");
+					WriteToLog(PID_string + " " + Instance_Name + " Camera Reply Error");
 					curl_easy_cleanup(curl);
 					curl_global_cleanup();
 					return(0);
@@ -170,7 +170,7 @@ int  CheckCameraMotionStatus(string CameraIP, string CameraUserName, string Came
 					 return (0);
 				 }
 
-				 WriteToLog(PID_string + " Motion Detected");
+				 WriteToLog(PID_string + " " + Instance_Name + " Motion Detected");
                  char* Message = "Motion Detected\n";
 				 SendDataToExacqServer(ExacqIP, ExacqPort, Message);
                  CheckCameraTypeOfMotion(CameraIP, CameraUserName, CameraPassword);
@@ -210,7 +210,7 @@ int CheckCameraTypeOfMotion(string CameraIP, string CameraUserName, string Camer
 
 					   if(res == '7')
 					   {
-						WriteToLog (PID_string + " Unable to Connect to Camera ...");
+						WriteToLog (PID_string + " " + Instance_Name + " Unable to Connect to Camera ...");
 						fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
 				        curl_easy_cleanup(curl);
 				        curl_global_cleanup();
@@ -221,7 +221,7 @@ int CheckCameraTypeOfMotion(string CameraIP, string CameraUserName, string Camer
 
 					  if (readBuffer.length() < 10)
 					   {
-						WriteToLog(PID_string + " Camera Reply Error");
+						WriteToLog(PID_string + " " + Instance_Name + " Camera Reply Error");
 						curl_easy_cleanup(curl);
 						curl_global_cleanup();
 						return(0);
@@ -236,7 +236,7 @@ int CheckCameraTypeOfMotion(string CameraIP, string CameraUserName, string Camer
                      {
                     	 char* Message = "Detected Animal\n";
                     	 SendDataToExacqServer(ExacqIP, ExacqPort, Message);
-                         WriteToLog(PID_string + " Detected Animal\n");
+                         WriteToLog(PID_string + " " + Instance_Name +" Detected Animal\n");
                      }
 
                      int PersonInt = stoi(Person);
@@ -244,7 +244,7 @@ int CheckCameraTypeOfMotion(string CameraIP, string CameraUserName, string Camer
                      {
                        	 char* Message = "Detected Person\n";
                        	 SendDataToExacqServer(ExacqIP, ExacqPort, Message);
-                         WriteToLog(PID_string + " Detected Person\n");
+                         WriteToLog(PID_string + " " + Instance_Name + " Detected Person\n");
                      }
 
                      int VehicalInt = stoi(Vehical);
@@ -252,7 +252,7 @@ int CheckCameraTypeOfMotion(string CameraIP, string CameraUserName, string Camer
                      {
                        	 char* Message = "Detected Vehical\n";
                        	 SendDataToExacqServer(ExacqIP, ExacqPort, Message);
-                         WriteToLog(PID_string + " Detected Vehical\n");
+                         WriteToLog(PID_string + " " + Instance_Name + " Detected Vehical\n");
                       }
 
 
@@ -286,7 +286,7 @@ void SendDataToExacqServer(char* ExacqIP, int port, char* Message)
 
 	   if(connect(CreateSocket, (struct sockaddr *)&ipOfServer, sizeof(ipOfServer))<0)
 	      {
-	          WriteToLog(PID_string + " Connection to Exacq Server failed due to port and ip problems");
+	          WriteToLog(PID_string + " " + Instance_Name + " Connection to Exacq Server failed due to port and ip problems");
 	          return ;
 	      }
 
@@ -306,7 +306,7 @@ void WriteToLog(string log_message)
 			    strftime(buff, sizeof buff, "%D %T", gmtime(&ts.tv_sec));
 
 				 ofstream file;
-				 file.open ("/var/log/Reolink2Exacq.log",std::ios_base::app);
+				 file.open ("/var/log/Reolink2Exacq_" + Instance_Name + ".log",std::ios_base::app);
 
 				char MyTime[100];
 				sprintf(MyTime," %s.%09ld " , buff,ts.tv_nsec); //Format and apply data
