@@ -51,6 +51,7 @@ struct curl_slist *headers = NULL;
     int PID;
     string PID_string;
     string Instance_Name;
+    string AIO = " ";
 
 int main(int argc, char *argv[]) {
 
@@ -61,27 +62,34 @@ int main(int argc, char *argv[]) {
 	    ExacqPort = std::stoi( argv[5]);
 	    Instance_Name = argv[6];
 
+	    if (argc > 7)
+	    {
+	    	cout << argv[7];
+	    	AIO = argv[7];
+
+	    }
+
 	PID = getpid();
 	cout << PID << endl;
     PID_string = to_string(PID);
 
 	WriteToLog(PID_string + " " + Instance_Name + " Reolink2Exacq has started..." );
 
-	if(argc < 6){
+	if(argc < 7){
 		cout<< " " << endl;
 		cout<<"Please check command line arguments" << endl;
-	    cout<<"Example: ./Reolink2Exacq 10.10.10.32 admin pAsswOrd 10.10.10.19 1235"<< endl;
+	    cout<<"Example: ./Reolink2Exacq 10.10.10.32 admin pAsswOrd 10.10.10.19 1235 Cam1 AIO" << endl;
 	    cout<< " " << endl;
 	    WriteToLog(PID_string + " " + Instance_Name + " Reolink2Eacq Stoped with Incomplete arguments error...");
 		return(2);
 	}
 
 
-
-    while(true){
+    while(true)
+    {
     usleep(50000); //sleep for 500ms
     int CameraMotion = CheckCameraMotionStatus(CameraIP, CameraUserName, CameraPassword);
-       }
+     }
 
 
     WriteToLog(PID_string + " " + Instance_Name + "Reolink2Exacq has Stoped ...");
@@ -172,8 +180,13 @@ int  CheckCameraMotionStatus(string CameraIP, string CameraUserName, string Came
 
 				 WriteToLog(PID_string + " " + Instance_Name + " Motion Detected");
                  char* Message = "Motion Detected\n";
-				 SendDataToExacqServer(ExacqIP, ExacqPort, Message);
-                 CheckCameraTypeOfMotion(CameraIP, CameraUserName, CameraPassword);
+
+                 if (AIO != "AIO")
+                 {
+                 SendDataToExacqServer(ExacqIP, ExacqPort, Message);
+                 }
+
+				 CheckCameraTypeOfMotion(CameraIP, CameraUserName, CameraPassword);
 
 				 curl_easy_cleanup(curl);
 				 curl_global_cleanup();
@@ -234,25 +247,25 @@ int CheckCameraTypeOfMotion(string CameraIP, string CameraUserName, string Camer
 					 int AnimalInt = stoi(Animal);
                      if(AnimalInt == 1)
                      {
-                    	 char* Message = "Detected Animal\n";
+                    	 char* Message = " Animal Detected\n";
                     	 SendDataToExacqServer(ExacqIP, ExacqPort, Message);
-                         WriteToLog(PID_string + " " + Instance_Name +" Detected Animal\n");
+                         WriteToLog(PID_string + " " + Instance_Name +"  Animal Detected\n");
                      }
 
                      int PersonInt = stoi(Person);
                      if(PersonInt == 1)
                      {
-                       	 char* Message = "Detected Person\n";
+                       	 char* Message = " Person Detected\n";
                        	 SendDataToExacqServer(ExacqIP, ExacqPort, Message);
-                         WriteToLog(PID_string + " " + Instance_Name + " Detected Person\n");
+                         WriteToLog(PID_string + " " + Instance_Name + " Person Detected \n");
                      }
 
                      int VehicalInt = stoi(Vehical);
                      if(VehicalInt == 1)
                      {
-                       	 char* Message = "Detected Vehical\n";
+                       	 char* Message = " Vehical Detected\n";
                        	 SendDataToExacqServer(ExacqIP, ExacqPort, Message);
-                         WriteToLog(PID_string + " " + Instance_Name + " Detected Vehical\n");
+                         WriteToLog(PID_string + " " + Instance_Name + " Vehical Detected\n");
                       }
 
 
