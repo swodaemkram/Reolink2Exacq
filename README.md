@@ -9,9 +9,9 @@ Command line utility is ment to run as a daemon on linux OS typical usage:<br>
 ./Reolink2Exacq [camera i.p.] [camera user name] [camera password] [Exacq Vision Server I.P.] [Exacq Vision Server Port] [Instance Name] [use AI triggering only] & disown<br>
 <br>
 <br>
-Real Example: ./Reolink2Exacq 10.10.10.31 admin pAsswoRd 10.10.10.19 1234 GarageCam & disown
+<b>Real Example:</b> ./Reolink2Exacq 10.10.10.31 admin pAsswoRd 10.10.10.19 1234 GarageCam & disown
 <br>
-Example 2: ./Reolink2Exacq 10.10.10.32 admin pAsswoRd 10.10.10.19 1235 TomatoCam AIO & disown
+<b>Example 2:</b> ./Reolink2Exacq 10.10.10.32 admin pAsswoRd 10.10.10.19 1235 TomatoCam AIO & disown
 <br>
 <br>
 of course you need to setup a serial port on your Exacq Vision server for each instance of Reolink2Exacq you are running. Also a serial profile for each instance and an event link for each. 
