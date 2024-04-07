@@ -55,6 +55,14 @@ struct curl_slist *headers = NULL;
 
 int main(int argc, char *argv[]) {
 
+	    if (argc < 2)
+	    {
+	    	cout << "Reolink2Exacq V1.001 By Mark Meadows (c)2024"<<endl;
+	    	return EXIT_SUCCESS;
+
+	    }
+
+
 	    CameraIP = argv[1];
 	    CameraUserName = argv[2];
 	    CameraPassword = argv[3];
