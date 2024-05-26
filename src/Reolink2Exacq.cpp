@@ -52,6 +52,7 @@ struct curl_slist *headers = NULL;
     string PID_string;
     string Instance_Name;
     string AIO = " ";
+    bool Logging = true;
 
 int main(int argc, char *argv[]) {
 
@@ -69,12 +70,13 @@ int main(int argc, char *argv[]) {
 	    ExacqIP = argv[4];
 	    ExacqPort = std::stoi( argv[5]);
 	    Instance_Name = argv[6];
+	    Logging = argv[7];
 
-	    if (argc > 7)
+
+	    if (argc > 8)
 	    {
-	    	cout << argv[7];
-	    	AIO = argv[7];
-
+	    	cout << argv[8];
+	    	AIO = argv[8];
 	    }
 
 	PID = getpid();
@@ -189,7 +191,7 @@ int  CheckCameraMotionStatus(string CameraIP, string CameraUserName, string Came
 				 WriteToLog(PID_string + " " + Instance_Name + " Motion Detected");
                  char* Message = "Motion Detected\n";
 
-                 if (AIO != "AIO")
+                 if (AIO != "AIO") //AI only if true will not send motion data just AI data **************************************
                  {
                  SendDataToExacqServer(ExacqIP, ExacqPort, Message);
                  }
@@ -340,8 +342,14 @@ void WriteToLog(string log_message)
 				return;
 }
 
-
-
+//       Validate IP Address
+bool validateIpAddress(const string &ipAddress)
+{
+    struct sockaddr_in sa;
+    int result = inet_pton(AF_INET, ipAddress.c_str(), &(sa.sin_addr));
+    return result != 0;
+}
+//      End Validate IP Address
 
 
 ////////////////////////////////////////   End Of Functions   //////////////////////////////////////////////
