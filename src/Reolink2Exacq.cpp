@@ -2,7 +2,7 @@
  ============================================================================
  Name        : Reolink2Exacq.c
  Author      : Mark Meadows
- Version     : 0.1.0b
+ Version     :1.3.0b
  Copyright   : copyright 2024
  Description : Reolink2Exacq in C, Ansi-style
  Allows Reolink Camera to be used with Exacq Vision NVR
@@ -10,7 +10,7 @@
 =============================================================================
  Usage: ./Reolink2Exacq CameraIP UserName Password ExacqIP ExacqPort
 
- Example: ./Reolink2Exacq 10.10.10.32 admin pAsswOrd 10.10.10.19 1235
+ Example: ./Reolink2Exacq 10.10.10.32 admin pAsswOrd 10.10.10.19 1235 AIO & disown
 
  http://10.10.10.32/api.cgi?cmd=GetAiState&user=admin&password=pAsswOrd
  ============================================================================
