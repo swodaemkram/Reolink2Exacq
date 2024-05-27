@@ -34,11 +34,10 @@ using namespace std;
 
 
 void WriteToLog(string log_message);
-int CheckCameraMotionStatus(string CameraIP, string CameraUserName, string CameraPassword);
+void CheckCameraMotionStatus(string CameraIP, string CameraUserName, string CameraPassword);
 int CheckCameraTypeOfMotion(string CameraIP, string CameraUserName, string CameraPassword);
 void SendDataToExacqServer(char* ExacqIP, int port, char* Message);
-void ParceCommandLineArguments(string CameraIP, string CameraUserName, string CameraPassword, string ExacqIP, string ExacqPort);
-
+bool validateIpAddress(const string ipAddress);
 
 
 struct curl_slist *headers = NULL;
@@ -56,49 +55,73 @@ struct curl_slist *headers = NULL;
 
 int main(int argc, char *argv[]) {
 
-	    if (argc < 2)
-	    {
-	    	cout << "Reolink2Exacq V1.001 By Mark Meadows (c)2024"<<endl;
-	    	return EXIT_SUCCESS;
+	if (argc < 2)
+    {
+    	cout << "Reolink2Exacq V1.10 By Mark Meadows (c)2024"<<endl;
+    	cout << "Usage: ./Reolink2Exacq CameraIP UserName Password ExacqIP ExacqPort" <<endl;
+        cout << "Example: ./Reolink2Exacq 10.10.10.32 admin pAsswOrd 10.10.10.19 1235 NameOfInstance AIO & disown" <<endl;
+    	return EXIT_SUCCESS;
+    }
 
-	    }
+   //Check First IP Address
+	CameraIP = argv[1];
+    bool Yes_No;
+    Yes_No = validateIpAddress(CameraIP);
+    cout << Yes_No << endl;
+
+    if (Yes_No != 1)
+    {
+        cout << "First argument must be a valid I.P. Address of your camera"<< endl;
+        return 1;
+    }
+   //End of First IP Check
+
+    CameraUserName = argv[2];
+    CameraPassword = argv[3];
+
+   //Check First IP Address
+    ExacqIP = argv[4];
+    bool Yes_No_IP;
+    Yes_No_IP = validateIpAddress(ExacqIP);
+    cout << Yes_No_IP << endl;
+
+    if (Yes_No_IP !=1)
+    {
+    	cout << "4th argument must be a valid I.P. Address of the NVR" << endl;
+    	return 1;
+    }
+   //End of First IP Check
+
+    ExacqPort = std::stoi( argv[5]);
+    Instance_Name = argv[6];
+    Logging = argv[7];
 
 
-	    CameraIP = argv[1];
-	    CameraUserName = argv[2];
-	    CameraPassword = argv[3];
-	    ExacqIP = argv[4];
-	    ExacqPort = std::stoi( argv[5]);
-	    Instance_Name = argv[6];
-	    Logging = argv[7];
+    if (argc > 8)
+    {
+    	cout << argv[8];
+    	AIO = argv[8];
+    }
 
+PID = getpid();
+cout << PID << endl;
+PID_string = to_string(PID);
 
-	    if (argc > 8)
-	    {
-	    	cout << argv[8];
-	    	AIO = argv[8];
-	    }
+WriteToLog(PID_string + " " + Instance_Name + " Reolink2Exacq has started..." );
 
-	PID = getpid();
-	cout << PID << endl;
-    PID_string = to_string(PID);
-
-	WriteToLog(PID_string + " " + Instance_Name + " Reolink2Exacq has started..." );
-
-	if(argc < 7){
-		cout<< " " << endl;
-		cout<<"Please check command line arguments" << endl;
-	    cout<<"Example: ./Reolink2Exacq 10.10.10.32 admin pAsswOrd 10.10.10.19 1235 Cam1 AIO" << endl;
-	    cout<< " " << endl;
-	    WriteToLog(PID_string + " " + Instance_Name + " Reolink2Eacq Stoped with Incomplete arguments error...");
-		return(2);
-	}
-
+if(argc < 7){
+	cout<< " " << endl;
+	cout<<"Please check command line arguments" << endl;
+    cout<<"Example: ./Reolink2Exacq 10.10.10.32 admin pAsswOrd 10.10.10.19 1235 Cam1 AIO" << endl;
+    cout<< " " << endl;
+    WriteToLog(PID_string + " " + Instance_Name + " Reolink2Eacq Stoped with Incomplete arguments error...");
+	return(2);
+}
 
     while(true)
     {
     usleep(50000); //sleep for 500ms
-    int CameraMotion = CheckCameraMotionStatus(CameraIP, CameraUserName, CameraPassword);
+    CheckCameraMotionStatus(CameraIP, CameraUserName, CameraPassword);
      }
 
 
@@ -109,15 +132,6 @@ int main(int argc, char *argv[]) {
 
 /////////////////////////////////////////     Functions   //////////////////////////////////////////////////
 
-void ParceCommandLineArguments(string CameraIP, string CameraUserName, string CameraPassword, string ExacqIP, string ExacqPort )
-{
-	cout<< CameraIP << " " << CameraUserName << " " << CameraPassword <<" " << ExacqIP << " " << ExacqPort << endl;
-    string CommandLineArguments = CameraIP + " " + CameraUserName + " " + CameraPassword + " " + ExacqIP + " " + ExacqPort;
-
-	WriteToLog(CommandLineArguments);
-
-	return;
-}
 
 
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
@@ -127,7 +141,7 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
 }
 
 
-int  CheckCameraMotionStatus(string CameraIP, string CameraUserName, string CameraPassword)
+void  CheckCameraMotionStatus(string CameraIP, string CameraUserName, string CameraPassword)
 {
 
 	//http://10.10.10.32/api.cgi?cmd=GetMdState&channel=0&user=admin&password=pAsswOrd
@@ -161,7 +175,7 @@ int  CheckCameraMotionStatus(string CameraIP, string CameraUserName, string Came
 					fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
 			        curl_easy_cleanup(curl);
 			        curl_global_cleanup();
-			        return(0);
+			        return;
 				   }
 
 
@@ -171,7 +185,7 @@ int  CheckCameraMotionStatus(string CameraIP, string CameraUserName, string Came
 					WriteToLog(PID_string + " " + Instance_Name + " Camera Reply Error");
 					curl_easy_cleanup(curl);
 					curl_global_cleanup();
-					return(0);
+					return;
 				   }
 
 
@@ -185,7 +199,7 @@ int  CheckCameraMotionStatus(string CameraIP, string CameraUserName, string Came
 				 {
 					 curl_easy_cleanup(curl);
 					 curl_global_cleanup();
-					 return (0);
+					 return;
 				 }
 
 				 WriteToLog(PID_string + " " + Instance_Name + " Motion Detected");
@@ -200,7 +214,7 @@ int  CheckCameraMotionStatus(string CameraIP, string CameraUserName, string Came
 
 				 curl_easy_cleanup(curl);
 				 curl_global_cleanup();
-		         return (1);
+		         return;
 }
 
 
@@ -323,7 +337,11 @@ void SendDataToExacqServer(char* ExacqIP, int port, char* Message)
 void WriteToLog(string log_message)
 {
 
-            	struct timespec ts;
+            	if(AIO == "AIO")
+            	{
+            		return;
+            	}
+	            struct timespec ts;
 			    timespec_get(&ts, TIME_UTC);
 			    char buff[100];
 			    strftime(buff, sizeof buff, "%D %T", gmtime(&ts.tv_sec));
@@ -343,7 +361,7 @@ void WriteToLog(string log_message)
 }
 
 //       Validate IP Address
-bool validateIpAddress(const string &ipAddress)
+bool validateIpAddress(const string ipAddress)
 {
     struct sockaddr_in sa;
     int result = inet_pton(AF_INET, ipAddress.c_str(), &(sa.sin_addr));
