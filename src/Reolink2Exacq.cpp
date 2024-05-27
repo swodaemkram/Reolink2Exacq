@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
      }
 
 
-     if (argc == 8)
+     if (argc > 8)
     {
     	AIO = argv[8];
     }
@@ -136,6 +136,8 @@ cout << PID << endl;
 PID_string = to_string(PID);
 
 WriteToLog(PID_string + " " + Instance_Name + " Reolink2Exacq has started..." );
+//WriteToLog(PID_string + " " + Instance_Name + " " + CameraIP + " " + CameraUserName + " " + CameraPassword + " " + ExacqIP + " " + argv[5] + " Logging = " + Logging + " A/I Only = " + AIO);
+
 
 if(argc < 7){
 	cout<< " " << endl;
@@ -143,7 +145,8 @@ if(argc < 7){
     cout<<"Example: ./Reolink2Exacq 10.10.10.32 admin pAsswOrd 10.10.10.19 1235 Cam1 AIO" << endl;
     cout<< " " << endl;
     WriteToLog(PID_string + " " + Instance_Name + " Reolink2Eacq Stoped with Incomplete arguments error...");
-	return(2);
+
+    //return(2);
 }
 
     while(true)
@@ -402,11 +405,7 @@ void SendDataToExacqServer(char* ExacqIP, int port, char* Message)
 void WriteToLog(string log_message)
 {
 
-            	if(AIO == "AIO")
-            	{
-            		return;
-            	}
-	            struct timespec ts;
+                struct timespec ts;
 			    timespec_get(&ts, TIME_UTC);
 			    char buff[100];
 			    strftime(buff, sizeof buff, "%D %T", gmtime(&ts.tv_sec));
