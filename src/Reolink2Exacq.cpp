@@ -2,7 +2,7 @@
  ============================================================================
  Name        : Reolink2Exacq.c
  Author      : Mark Meadows
- Version     :1.3.0b
+ Version     :1.8.0b
  Copyright   : copyright 2024
  Description : Reolink2Exacq in C, Ansi-style
  Allows Reolink Camera to be used with Exacq Vision NVR
@@ -19,8 +19,9 @@
                            Camera Username
                                            Camera Password
                                                            Exacq Port
-                                                                       Logging Y/N
-                                                                                   AIO (Trigger on AI only no false alarms on just motion)
+                                                                      Instance_Name
+                                                                                   Logging Y/N
+                                                                                             AIO (Trigger on AI only no false alarms on just motion)
                                                                                                                                            & disown (Make Daemon)
 
  ============================================================================
@@ -61,15 +62,15 @@ struct curl_slist *headers = NULL;
     string PID_string;
     string Instance_Name;
     string AIO = " ";
-    bool Logging = true;
+    string Logging = "T";
 
 int main(int argc, char *argv[]) {
 
 	if (argc < 2)
     {
-    	cout << "Reolink2Exacq V1.10 By Mark Meadows (c)2024"<<endl;
+    	cout << "Reolink2Exacq V1.8.0 By Mark Meadows (c)2024"<<endl;
     	cout << "Usage: ./Reolink2Exacq CameraIP UserName Password ExacqIP ExacqPort" <<endl;
-        cout << "Example: ./Reolink2Exacq 10.10.10.32 admin pAsswOrd 10.10.10.19 1235 NameOfInstance AIO & disown" <<endl;
+        cout << "Example: ./Reolink2Exacq 10.10.10.32 admin pAsswOrd 10.10.10.19 1235 NameOfInstance T AIO & disown" <<endl;
     	return EXIT_SUCCESS;
     }
 
@@ -77,7 +78,6 @@ int main(int argc, char *argv[]) {
 	CameraIP = argv[1];
     bool Yes_No;
     Yes_No = validateIpAddress(CameraIP);
-    cout << Yes_No << endl;
 
     if (Yes_No != 1)
     {
@@ -89,29 +89,47 @@ int main(int argc, char *argv[]) {
     CameraUserName = argv[2];
     CameraPassword = argv[3];
 
-   //Check First IP Address
+   //Check NVRs IP Address
     ExacqIP = argv[4];
     bool Yes_No_IP;
     Yes_No_IP = validateIpAddress(ExacqIP);
-    cout << Yes_No_IP << endl;
 
     if (Yes_No_IP !=1)
     {
     	cout << "4th argument must be a valid I.P. Address of the NVR" << endl;
     	return 1;
     }
-   //End of First IP Check
+   //End of NVRs IP Check
 
-    ExacqPort = std::stoi( argv[5]);
+    ExacqPort = std::stoi( argv[5]); //Convert port into an intager
+
     Instance_Name = argv[6];
-    Logging = argv[7];
 
+    // Verify Logging Variable is a Bool
 
-    if (argc > 8)
+    if(argc > 7)
     {
-    	cout << argv[8];
+    	Logging = argv[7];
+    }
+
+    Logging = Logging[0];
+
+    if(Logging == "T" || Logging == "t")
+     {
+    	 Logging = "T";
+     }
+
+     if(Logging == "F" || Logging =="f")
+     {
+    	 Logging = "F";
+     }
+
+
+     if (argc == 8)
+    {
     	AIO = argv[8];
     }
+
 
 PID = getpid();
 cout << PID << endl;
@@ -212,8 +230,12 @@ void  CheckCameraMotionStatus(string CameraIP, string CameraUserName, string Cam
 					 return;
 				 }
 
+				 if(Logging == "T" )
+				 {
 				 WriteToLog(PID_string + " " + Instance_Name + " Motion Detected");
-                 char* Message = "Motion Detected\n";
+				 }
+
+				 char* Message = "Motion Detected\n";
 
                  if (AIO != "AIO") //AI only if true will not send motion data just AI data **************************************
                  {
@@ -283,15 +305,23 @@ int CheckCameraTypeOfMotion(string CameraIP, string CameraUserName, string Camer
                      {
                     	 char* Message = " Animal Detected\n";
                     	 SendDataToExacqServer(ExacqIP, ExacqPort, Message);
-                         WriteToLog(PID_string + " " + Instance_Name +"  Animal Detected\n");
-                     }
+
+                    	 if (Logging == "T")
+                         {
+                    	 WriteToLog(PID_string + " " + Instance_Name +"  Animal Detected\n");
+                         }
+                      }
 
                      int PersonInt = stoi(Person);
                      if(PersonInt == 1)
                      {
                        	 char* Message = " Person Detected\n";
                        	 SendDataToExacqServer(ExacqIP, ExacqPort, Message);
-                         WriteToLog(PID_string + " " + Instance_Name + " Person Detected \n");
+
+                       	 if (Logging =="T")
+                         {
+                       	 WriteToLog(PID_string + " " + Instance_Name + " Person Detected \n");
+                         }
                      }
 
                      int VehicalInt = stoi(Vehical);
@@ -299,7 +329,11 @@ int CheckCameraTypeOfMotion(string CameraIP, string CameraUserName, string Camer
                      {
                        	 char* Message = " Vehical Detected\n";
                        	 SendDataToExacqServer(ExacqIP, ExacqPort, Message);
-                         WriteToLog(PID_string + " " + Instance_Name + " Vehical Detected\n");
+
+                       	 if(Logging == "T")
+                         {
+                       	 WriteToLog(PID_string + " " + Instance_Name + " Vehical Detected\n");
+                         }
                       }
 
 
