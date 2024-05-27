@@ -310,6 +310,12 @@ int CheckCameraTypeOfMotion(string CameraIP, string CameraUserName, string Camer
                          {
                     	 WriteToLog(PID_string + " " + Instance_Name +"  Animal Detected\n");
                          }
+
+                    	 if (AIO == "AIO" && Logging == "F")
+                    	 {
+                    		WriteToLog(PID_string + " " + Instance_Name +"  Animal Detected\n");
+                    	 }
+
                       }
 
                      int PersonInt = stoi(Person);
@@ -322,6 +328,13 @@ int CheckCameraTypeOfMotion(string CameraIP, string CameraUserName, string Camer
                          {
                        	 WriteToLog(PID_string + " " + Instance_Name + " Person Detected \n");
                          }
+
+                         if (AIO == "AIO" && Logging == "F")
+                         {
+                         WriteToLog(PID_string + " " + Instance_Name + " Person Detected \n");
+                         }
+
+
                      }
 
                      int VehicalInt = stoi(Vehical);
@@ -334,7 +347,15 @@ int CheckCameraTypeOfMotion(string CameraIP, string CameraUserName, string Camer
                          {
                        	 WriteToLog(PID_string + " " + Instance_Name + " Vehical Detected\n");
                          }
-                      }
+
+                         if(AIO == "AIO" && Logging == "F")
+                         {
+                        	 WriteToLog(PID_string + " " + Instance_Name + " Vehical Detected\n");
+                         }
+
+
+
+                     }
 
 
 					//* WriteToLog("AI Detected");
