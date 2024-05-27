@@ -8,11 +8,21 @@
  Allows Reolink Camera to be used with Exacq Vision NVR
  (Implaments Motion Detection and AI (Person,Car,Animal) Detection)
 =============================================================================
- Usage: ./Reolink2Exacq CameraIP UserName Password ExacqIP ExacqPort
+ Usage: ./Reolink2Exacq CameraIP UserName Password ExacqIP ExacqPort Logging AIOnly
 
- Example: ./Reolink2Exacq 10.10.10.32 admin pAsswOrd 10.10.10.19 1235 AIO & disown
+ Example: ./Reolink2Exacq 10.10.10.32 admin pAsswOrd 10.10.10.19 1235 N AIO & disown
 
  http://10.10.10.32/api.cgi?cmd=GetAiState&user=admin&password=pAsswOrd
+
+ ./Reolink2Exacq
+                 CameraIP
+                           Camera Username
+                                           Camera Password
+                                                           Exacq Port
+                                                                       Logging Y/N
+                                                                                   AIO (Trigger on AI only no false alarms on just motion)
+                                                                                                                                           & disown (Make Daemon)
+
  ============================================================================
  */
 using namespace std;
